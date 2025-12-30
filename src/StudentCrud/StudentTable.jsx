@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -21,6 +22,7 @@ const Div = styled('div')(({ theme }) => ({
 }));
 
 function StudentTable() {
+  const navigate = useNavigate();
   const [students, setStudents] = useState([]);
   const [name, setName] = useState('');
   const [place, setPlace] = useState('');
@@ -81,7 +83,7 @@ function StudentTable() {
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell> SL.ID</TableCell>
+            <TableCell>Order</TableCell>
             <TableCell align="right">Name</TableCell>
             <TableCell align="right">Place&nbsp;</TableCell>
             <TableCell align="right">Phone&nbsp;</TableCell>
@@ -101,8 +103,8 @@ function StudentTable() {
               <TableCell align="right">{student.place}</TableCell>
               <TableCell align="right">{student.phone}</TableCell>
               <TableCell align="right">
-                <Button variant="contained" color="primary" size="small" sx={{marginRight: '5px'}}>View</Button>
-                <Button variant="contained" color="warning" size="small" sx={{marginRight: '5px'}}>Edit</Button>
+                <Button variant="contained" color="primary" size="small" sx={{marginRight: '5px'}} onClick={() => navigate(`/StudentCrud/view/${student.id}`, { state: { student } })}>View</Button>
+                <Button variant="contained" color="warning" size="small" sx={{marginRight: '5px'}} onClick={() => navigate(`/StudentCrud/edit/${student.id}`, { state: { student } })}>Edit</Button>
                 <Button variant="contained" color="error" size="small" onClick={() => handleDelete(student.id)}>Delete</Button>
               </TableCell>
             </TableRow>
