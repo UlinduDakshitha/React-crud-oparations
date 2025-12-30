@@ -4,6 +4,7 @@ import StudentTable from './StudentCrud/StudentTable'
 import CreateStudent from './StudentCrud/CreateStudent'
 import EditStudent from './StudentCrud/EditStudent'
 import ViewDetails from './StudentCrud/ViewDetails'
+import './App.css'
 
 function App() {
   return (
