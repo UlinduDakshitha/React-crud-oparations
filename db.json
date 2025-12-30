@@ -1,0 +1,10 @@
+{
+  "students": [
+    {
+      "id": "2",
+      "name": "Jane Smith",
+      "place": "Los Angeles",
+      "phone": "987-654-3210"
+    }
+  ]
+}

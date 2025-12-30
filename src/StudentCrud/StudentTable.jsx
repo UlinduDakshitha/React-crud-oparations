@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { styled } from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -20,29 +20,45 @@ const Div = styled('div')(({ theme }) => ({
   boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
 }));
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-  createData( 1, 'Tharindu', "Japan", 24,  ),
-  createData(2, 'Kavindu', "USA", 37,  ),
-  createData(3, 'Ravindu', "India", 24,  ),
-  createData(4, 'Nimal', "Australia", 67,  ),
-  createData(5, 'Kamal', "Canada", 49,  ),
-];
-
 function StudentTable() {
+  const [students, setStudents] = useState([]);
   const [name, setName] = useState('');
   const [place, setPlace] = useState('');
   const [phone, setPhone] = useState('');
 
   const handleAddStudent = () => {
-    console.log('Adding student:', { name, place, phone });
-    setName('');
-    setPlace('');
-    setPhone('');
+    if (name && place && phone) {
+      const newStudent = { name, place, phone };
+      fetch("http://localhost:8000/students", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newStudent)
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        setStudents([...students, data]);
+        setName('');
+        setPlace('');
+        setPhone('');
+      })
+      .catch((error) => console.error("Error adding student:", error));
+    }
   };
+
+  const handleDelete = (id) => {
+    fetch(`http://localhost:8000/students/${id}`, {
+       method: 'DELETE'
+       })
+      .then(() => setStudents(students.filter((student) => student.id !== id)))
+      .catch((error) => console.error("Error deleting student:", error));
+  };
+
+  useEffect(() => {
+    fetch("http://localhost:8000/students")
+      .then((res) => res.json())
+      .then((data) => setStudents(data))
+      .catch((error) => console.error("Error fetching student data:", error));
+  }, []);
 
   return (
     <div className='container' style={{
@@ -73,21 +89,21 @@ function StudentTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {students.map((student) => (
             <TableRow
-              key={row.name}
+              key={student.id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell component="th" scope="row">
-                {row.name}
+                {student.id}
               </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.carbs}</TableCell>
+              <TableCell align="right">{student.name}</TableCell>
+              <TableCell align="right">{student.place}</TableCell>
+              <TableCell align="right">{student.phone}</TableCell>
               <TableCell align="right">
                 <Button variant="contained" color="primary" size="small" sx={{marginRight: '5px'}}>View</Button>
                 <Button variant="contained" color="warning" size="small" sx={{marginRight: '5px'}}>Edit</Button>
-                <Button variant="contained" color="error" size="small">Delete</Button>
+                <Button variant="contained" color="error" size="small" onClick={() => handleDelete(student.id)}>Delete</Button>
               </TableCell>
             </TableRow>
           ))}
